@@ -9,7 +9,7 @@
 <body>
     <div class="login-container">
         <h2>Admin Girişi</h2>
-        <form id="loginForm">
+        <form id="loginForm" onsubmit="return handleLogin(event)">
             <div class="form-group">
                 <label for="username">Kullanıcı Adı:</label>
                 <input type="text" id="username" name="username" required>
@@ -22,6 +22,25 @@
         </form>
         <div id="error-message" style="color: red; margin-top: 10px;"></div>
     </div>
-    <script src="login.js"></script>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (username === 'admin' && password === 'admin123') {
+                const token = btoa(username + ':' + new Date().getTime());
+                localStorage.setItem('adminToken', token);
+                window.location.href = 'admin.html';
+                return false;
+            } else {
+                errorMessage.textContent = 'Kullanıcı adı veya şifre hatalı!';
+                return false;
+            }
+        }
+    </script>
 </body>
 </html> 
