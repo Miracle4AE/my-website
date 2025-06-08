@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Fitness Merkezi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Ana Sayfa</a>
+            </div>
+            <div class="admin-nav">
+                <span class="welcome-text">Admin Panel</span>
+                <button class="logout-btn" onclick="adminLogout()">Çıkış Yap</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-sidebar">
+            <h2>Üye Listesi</h2>
+            <button class="add-user-btn" onclick="toggleAddUserForm()">Yeni Üye Ekle</button>
+            <div id="addUserForm" class="add-user-form" style="display: none;">
+                <h3>Yeni Üye Ekle</h3>
+                <form id="adminAddUserForm">
+                    <div class="form-group">
+                        <input type="text" id="firstName" name="firstName" placeholder="Ad" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="lastName" name="lastName" placeholder="Soyad" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="username" name="username" placeholder="Kullanıcı Adı" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="E-posta" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" name="password" placeholder="Şifre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Doğum Tarihi:</label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                    </div>
+                    <button type="submit" class="submit-user-btn">Üye Ekle</button>
+                    <button type="button" class="cancel-btn" onclick="toggleAddUserForm()">İptal</button>
+                </form>
+            </div>
+            <div class="user-list" id="userList">
+                <!-- Üye listesi JavaScript ile doldurulacak -->
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <div id="userDetails" class="user-details">
+                <h2>Üye Detayları</h2>
+                <div class="user-info-display">
+                    <p>Lütfen sol menüden bir üye seçin.</p>
+                </div>
+                
+                <div class="edit-sections" style="display: none;">
+                    <div class="edit-section">
+                        <div class="section-header">
+                            <h3>Aktif Dersler</h3>
+                            <button onclick="clearAllCourses()" class="clear-all-btn">Tümünü Temizle</button>
+                        </div>
+                        <div class="course-input-container">
+                            <div class="course-input-row">
+                                <select id="courseSelect" class="course-select">
+                                    <option value="">Ders Seçin</option>
+                                    <option value="Pilates">Pilates</option>
+                                    <option value="Yoga">Yoga</option>
+                                    <option value="Zumba">Zumba</option>
+                                    <option value="Spinning">Spinning</option>
+                                    <option value="Kickbox">Kickbox</option>
+                                    <option value="Fitness">Fitness</option>
+                                    <option value="CrossFit">CrossFit</option>
+                                    <option value="Yüzme">Yüzme</option>
+                                </select>
+                                <input type="date" id="courseDate" class="course-date">
+                                <input type="time" id="courseTime" class="course-time">
+                                <button onclick="addCourse()" class="add-course-btn">Ekle</button>
+                            </div>
+                            <div class="course-list" id="courseList">
+                                <!-- Aktif dersler buraya eklenecek -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edit-section">
+                        <div class="section-header">
+                            <h3>Ödenmiş Ücretler</h3>
+                            <button onclick="clearAllPaidFees()" class="clear-all-btn">Tümünü Temizle</button>
+                        </div>
+                        <div class="fee-input-container">
+                            <div class="fee-input-row">
+                                <input type="date" id="paidFeeDate" class="fee-date">
+                                <div class="fee-amount-container">
+                                    <input type="number" id="paidFeeAmount" class="fee-amount" placeholder="Miktar">
+                                    <span class="currency">TL</span>
+                                </div>
+                                <button onclick="addPaidFee()" class="add-fee-btn">Ekle</button>
+                            </div>
+                            <div class="fee-list" id="paidFeesList">
+                                <!-- Ödenmiş ücretler buraya eklenecek -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edit-section">
+                        <div class="section-header">
+                            <h3>Ödenecek Ücretler</h3>
+                            <button onclick="clearAllPendingFees()" class="clear-all-btn">Tümünü Temizle</button>
+                        </div>
+                        <div class="fee-input-container">
+                            <div class="fee-input-row">
+                                <input type="date" id="pendingFeeDate" class="fee-date">
+                                <div class="fee-amount-container">
+                                    <input type="number" id="pendingFeeAmount" class="fee-amount" placeholder="Miktar">
+                                    <span class="currency">TL</span>
+                                </div>
+                                <button onclick="addPendingFee()" class="add-fee-btn">Ekle</button>
+                            </div>
+                            <div class="fee-list" id="pendingFeesList">
+                                <!-- Ödenecek ücretler buraya eklenecek -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="save-btn" onclick="saveUserDetails()">Değişiklikleri Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html> 
