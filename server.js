@@ -2,16 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-
-// .env dosyasını yükle
-dotenv.config();
-
-// MongoDB bağlantısı
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('MongoDB bağlantısı başarılı'))
-    .catch(err => console.error('MongoDB bağlantı hatası:', err));
 
 const app = express();
 
@@ -19,6 +10,13 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// MongoDB bağlantısı
+const MONGODB_URI = 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.mongodb.net/cluster0?retryWrites=true&w=majority';
+
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('MongoDB bağlantısı başarılı'))
+    .catch(err => console.error('MongoDB bağlantı hatası:', err));
 
 // Statik dosyaları serve et
 app.use(express.static(path.join(__dirname)));
@@ -88,6 +86,117 @@ app.get('/api/users', async (req, res) => {
         res.status(200).json({
             success: true,
             data: users
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Tek bir kullanıcının detaylarını getir
+app.get('/api/users/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'Kullanıcı bulunamadı'
+            });
+        }
+        res.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Kullanıcıya ders ekle
+app.post('/api/courses/add', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'Kullanıcı bulunamadı'
+            });
+        }
+
+        user.activeCourses.push({
+            name: req.body.name,
+            date: req.body.date,
+            time: req.body.time
+        });
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Kullanıcının dersini sil
+app.delete('/api/courses/:courseId', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'Kullanıcı bulunamadı'
+            });
+        }
+
+        user.activeCourses = user.activeCourses.filter(
+            course => course._id.toString() !== req.params.courseId
+        );
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Kullanıcının tüm derslerini temizle
+app.delete('/api/courses/clear', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'Kullanıcı bulunamadı'
+            });
+        }
+
+        user.activeCourses = [];
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            data: user
         });
     } catch (error) {
         res.status(400).json({

@@ -1,3 +1,161 @@
+// Sayfa yüklendiğinde kullanıcıları getir
+document.addEventListener('DOMContentLoaded', fetchUsers);
+
+// Kullanıcıları getir
+async function fetchUsers() {
+    try {
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        
+        if (data.success) {
+            displayUsers(data.data);
+        } else {
+            console.error('Kullanıcılar getirilemedi:', data.error);
+        }
+    } catch (error) {
+        console.error('Kullanıcılar getirilemedi:', error);
+    }
+}
+
+// Kullanıcıları listele
+function displayUsers(users) {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+
+    users.forEach(user => {
+        const userElement = document.createElement('div');
+        userElement.className = 'user-item';
+        userElement.innerHTML = `
+            <span>${user.firstName} ${user.lastName}</span>
+            <button onclick="showUserDetails('${user._id}')">Detaylar</button>
+        `;
+        userList.appendChild(userElement);
+    });
+}
+
+// Kullanıcı detaylarını göster
+async function showUserDetails(userId) {
+    try {
+        const response = await fetch(`/api/users/${userId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const user = data.data;
+            document.getElementById('userFirstName').textContent = user.firstName;
+            document.getElementById('userLastName').textContent = user.lastName;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userJoinDate').textContent = new Date(user.joinDate).toLocaleDateString('tr-TR');
+            
+            displayActiveCourses(user.activeCourses || []);
+            
+            document.querySelector('.edit-sections').style.display = 'block';
+            document.querySelector('.user-info-display').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Kullanıcı detayları getirilemedi:', error);
+    }
+}
+
+// Aktif dersleri göster
+function displayActiveCourses(courses) {
+    const coursesList = document.getElementById('activeCoursesList');
+    coursesList.innerHTML = '';
+
+    courses.forEach(course => {
+        const courseElement = document.createElement('div');
+        courseElement.className = 'course-item';
+        courseElement.innerHTML = `
+            <span>${course.name} - ${new Date(course.date).toLocaleDateString('tr-TR')} ${course.time}</span>
+            <button onclick="deleteCourse('${course._id}')">Sil</button>
+        `;
+        coursesList.appendChild(courseElement);
+    });
+}
+
+// Yeni ders ekle
+async function addCourse() {
+    const courseSelect = document.getElementById('courseSelect');
+    const courseDate = document.getElementById('courseDate');
+    const courseTime = document.getElementById('courseTime');
+
+    if (!courseSelect.value || !courseDate.value || !courseTime.value) {
+        alert('Lütfen tüm alanları doldurun');
+        return;
+    }
+
+    const courseData = {
+        name: courseSelect.value,
+        date: courseDate.value,
+        time: courseTime.value
+    };
+
+    try {
+        const response = await fetch('/api/courses/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(courseData)
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayActiveCourses(data.data.activeCourses);
+            courseSelect.value = '';
+            courseDate.value = '';
+            courseTime.value = '';
+        }
+    } catch (error) {
+        console.error('Ders eklenemedi:', error);
+    }
+}
+
+// Ders sil
+async function deleteCourse(courseId) {
+    try {
+        const response = await fetch(`/api/courses/${courseId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayActiveCourses(data.data.activeCourses);
+        }
+    } catch (error) {
+        console.error('Ders silinemedi:', error);
+    }
+}
+
+// Tüm dersleri temizle
+async function clearAllCourses() {
+    if (!confirm('Tüm dersleri silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/courses/clear', {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayActiveCourses([]);
+        }
+    } catch (error) {
+        console.error('Dersler temizlenemedi:', error);
+    }
+}
+
+// Admin çıkış
+function adminLogout() {
+    localStorage.removeItem('adminToken');
+    window.location.href = '/';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Admin kontrolü
     const adminInfo = {
@@ -119,42 +277,6 @@ function createCourseItem(course, index) {
     return div;
 }
 
-function addCourse() {
-    const courseName = document.getElementById('courseSelect').value;
-    const courseDate = document.getElementById('courseDate').value;
-    const courseTime = document.getElementById('courseTime').value;
-
-    if (!courseName || !courseDate || !courseTime) {
-        alert('Lütfen tüm alanları doldurun!');
-        return;
-    }
-
-    const userData = JSON.parse(localStorage.getItem(`userData_${window.currentUsername}`)) || {
-        activeCourses: [],
-        paidFees: [],
-        pendingFees: []
-    };
-
-    const newCourse = {
-        name: courseName,
-        date: courseDate,
-        time: courseTime
-    };
-
-    userData.activeCourses.push(newCourse);
-    localStorage.setItem(`userData_${window.currentUsername}`, JSON.stringify(userData));
-
-    // Listeyi güncelle
-    const courseList = document.getElementById('courseList');
-    const courseItem = createCourseItem(newCourse, userData.activeCourses.length - 1);
-    courseList.appendChild(courseItem);
-
-    // Input alanlarını temizle
-    document.getElementById('courseSelect').value = '';
-    document.getElementById('courseDate').value = '';
-    document.getElementById('courseTime').value = '';
-}
-
 function editCourse(index) {
     const userData = JSON.parse(localStorage.getItem(`userData_${window.currentUsername}`));
     const course = userData.activeCourses[index];
@@ -166,20 +288,6 @@ function editCourse(index) {
 
     // Eski dersi sil
     deleteCourse(index);
-}
-
-function deleteCourse(index) {
-    const userData = JSON.parse(localStorage.getItem(`userData_${window.currentUsername}`));
-    userData.activeCourses.splice(index, 1);
-    localStorage.setItem(`userData_${window.currentUsername}`, JSON.stringify(userData));
-
-    // Listeyi güncelle
-    const courseList = document.getElementById('courseList');
-    courseList.innerHTML = '';
-    userData.activeCourses.forEach((course, i) => {
-        const courseItem = createCourseItem(course, i);
-        courseList.appendChild(courseItem);
-    });
 }
 
 function createFeeItem(fee, index, isPaid) {
@@ -285,11 +393,6 @@ function saveUserDetails() {
 
     localStorage.setItem(`userData_${window.currentUsername}`, JSON.stringify(userData));
     alert('Değişiklikler kaydedildi!');
-}
-
-function adminLogout() {
-    localStorage.removeItem('adminLoggedIn');
-    window.location.href = 'index.html';
 }
 
 function deleteUser(username) {
