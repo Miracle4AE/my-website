@@ -13,26 +13,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB bağlantısı
-const MONGODB_URI = 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.mongodb.net/cluster0?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.mongodb.net/cluster0?retryWrites=true&w=majority';
 
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('MongoDB bağlantısı başarılı'))
     .catch(err => console.error('MongoDB bağlantı hatası:', err));
 
-// Admin kullanıcı bilgileri (gerçek uygulamada bu bilgiler veritabanında saklanmalıdır)
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin123';
-const JWT_SECRET = 'gizli-anahtar-123';
+// Admin kullanıcı bilgileri
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const JWT_SECRET = process.env.JWT_SECRET || 'gizli-anahtar-123';
 
 // Admin girişi endpoint'i
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Admin kullanıcı adı ve şifre kontrolü
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        // JWT token oluştur
         const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-        
         res.json({
             success: true,
             token: token
@@ -233,7 +230,7 @@ app.delete('/api/courses/clear', async (req, res) => {
     }
 });
 
-// Server'ı başlat
+// Port ayarı
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server ${PORT} portunda çalışıyor`);
