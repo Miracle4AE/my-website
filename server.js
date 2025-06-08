@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -17,6 +18,32 @@ const MONGODB_URI = 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('MongoDB bağlantısı başarılı'))
     .catch(err => console.error('MongoDB bağlantı hatası:', err));
+
+// Admin kullanıcı bilgileri (gerçek uygulamada bu bilgiler veritabanında saklanmalıdır)
+const ADMIN_USERNAME = 'admin';
+const ADMIN_PASSWORD = 'admin123';
+const JWT_SECRET = 'gizli-anahtar-123';
+
+// Admin girişi endpoint'i
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Admin kullanıcı adı ve şifre kontrolü
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        // JWT token oluştur
+        const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+        
+        res.json({
+            success: true,
+            token: token
+        });
+    } else {
+        res.status(401).json({
+            success: false,
+            message: 'Geçersiz kullanıcı adı veya şifre'
+        });
+    }
+});
 
 // Statik dosyaları serve et
 app.use(express.static(path.join(__dirname)));
