@@ -1,5 +1,15 @@
-// Sayfa yüklendiğinde kullanıcıları getir
-document.addEventListener('DOMContentLoaded', fetchUsers);
+// Sayfa yüklendiğinde token kontrolü yap
+document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+        // Token yoksa login sayfasına yönlendir
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Sayfa yüklendiğinde kullanıcıları getir
+    fetchUsers();
+});
 
 // Kullanıcıları getir
 async function fetchUsers() {
