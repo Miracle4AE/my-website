@@ -6,12 +6,75 @@
     <title>Fitness Merkezi</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .loading-video {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .loading-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .skip-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 2;
+            transition: background-color 0.3s;
+        }
+
+        .skip-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 9999;
+            transition: opacity 1s;
+        }
+
+        #loading-screen.fade-out {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
-        <video id="loading-video" class="loading-video" autoplay muted preload="auto" crossorigin="anonymous">
-            <source src="./videos/istockphoto-1208364797-640_adpp_is.mp4" type="video/mp4" onerror="handleVideoError()">
+        <video id="loading-video" class="loading-video" autoplay muted preload="auto">
+            <source src="./videos/istockphoto-1208364797-640_adpp_is.mp4" type="video/mp4">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
     </div>
@@ -22,36 +85,30 @@
             const loadingVideo = document.getElementById('loading-video');
             const skipButton = document.getElementById('skip-video');
             let manualSkip = false;
-            let videoStartTime = 0;
-
-            function handleVideoError() {
-                if (!manualSkip) {
-                    fadeOutAndHide();
-                }
-            }
 
             function fadeOutAndHide() {
-                // Video en az 10 saniye oynatılmış olmalı veya manuel geçiş yapılmalı
-                const currentTime = new Date().getTime();
-                const videoPlayTime = (currentTime - videoStartTime) / 1000; // saniye cinsinden
-
-                if (!manualSkip && videoPlayTime < 10) {
-                    return;
-                }
-
                 loadingScreen.classList.add('fade-out');
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
                 }, 1000);
             }
 
-            loadingVideo.addEventListener('loadeddata', function() {
-                videoStartTime = new Date().getTime();
+            // Video yüklendiğinde
+            loadingVideo.addEventListener('loadedmetadata', function() {
                 loadingVideo.playbackRate = 1.0;
             });
 
-            loadingVideo.addEventListener('error', function(e) {
-                handleVideoError();
+            // Video bittiğinde
+            loadingVideo.addEventListener('ended', function() {
+                fadeOutAndHide();
+            });
+
+            // Video ilerleme kontrolü
+            loadingVideo.addEventListener('timeupdate', function() {
+                // Video süresini kontrol et
+                if (loadingVideo.currentTime >= loadingVideo.duration - 0.1) {
+                    fadeOutAndHide();
+                }
             });
 
             // Videoyu Atla butonuna tıklandığında
@@ -61,38 +118,12 @@
             });
 
             // Video yükleme ve oynatma
-            try {
-                loadingVideo.load();
-                loadingVideo.play().catch(function(error) {
-                    console.error('Video oynatma hatası:', error);
-                    handleVideoError();
-                });
-            } catch (error) {
-                console.error('Video yükleme hatası:', error);
-                handleVideoError();
-            }
-
-            // Her saniye kontrol et
-            setInterval(() => {
-                if (!manualSkip) {
-                    const currentTime = new Date().getTime();
-                    const videoPlayTime = (currentTime - videoStartTime) / 1000;
-                    
-                    // 10 saniye sonra otomatik geçiş yap
-                    if (videoPlayTime >= 10) {
-                        fadeOutAndHide();
-                    }
-                }
-            }, 1000);
+            loadingVideo.load();
+            loadingVideo.play().catch(function(error) {
+                console.error('Video oynatma hatası:', error);
+                fadeOutAndHide();
+            });
         });
-
-        window.handleVideoError = function() {
-            const loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.classList.add('fade-out');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 1000);
-        };
     </script>
 
     <header>
