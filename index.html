@@ -10,7 +10,7 @@
 <body>
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
-        <video id="loading-video" class="loading-video" autoplay muted>
+        <video id="loading-video" class="loading-video" autoplay muted preload="auto">
             <source src="videos/large.mp4" type="video/mp4">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
@@ -26,14 +26,37 @@
                 loadingScreen.classList.add('fade-out');
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
-                }, 1000); // 1 saniye sonra tamamen kaldır (transition süresiyle aynı)
+                }, 1000);
             }
 
+            // Video yüklenme durumunu kontrol et
+            loadingVideo.addEventListener('loadeddata', function() {
+                console.log('Video yüklendi, süre:', loadingVideo.duration);
+            });
+
+            // Video hata durumunu yakala
+            loadingVideo.addEventListener('error', function(e) {
+                console.error('Video yüklenirken hata:', loadingVideo.error);
+            });
+
+            // Video ilerleme durumunu kontrol et
+            loadingVideo.addEventListener('timeupdate', function() {
+                console.log('Video ilerleme:', loadingVideo.currentTime, '/', loadingVideo.duration);
+            });
+
             // Video bittiğinde loading ekranını yumuşak şekilde kaldır
-            loadingVideo.addEventListener('ended', fadeOutAndHide);
+            loadingVideo.addEventListener('ended', function() {
+                console.log('Video bitti');
+                fadeOutAndHide();
+            });
 
             // Videoyu Atla butonuna tıklandığında
             skipButton.addEventListener('click', fadeOutAndHide);
+
+            // Video otomatik başlamazsa başlat
+            loadingVideo.play().catch(function(error) {
+                console.log("Video otomatik başlatılamadı:", error);
+            });
         });
     </script>
 
