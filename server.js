@@ -15,7 +15,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // MongoDB bağlantısı
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.mongodb.net/cluster0?retryWrites=true&w=majority';
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
     .then(() => console.log('MongoDB bağlantısı başarılı'))
     .catch(err => console.error('MongoDB bağlantı hatası:', err));
 
@@ -24,8 +27,16 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const JWT_SECRET = process.env.JWT_SECRET || 'gizli-anahtar-123';
 
+// Statik dosyaları serve et
+app.use(express.static(path.join(__dirname)));
+
+// Ana sayfa route'u
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Admin girişi endpoint'i
-app.post('/api/login', (req, res) => {
+app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
@@ -40,14 +51,6 @@ app.post('/api/login', (req, res) => {
             message: 'Geçersiz kullanıcı adı veya şifre'
         });
     }
-});
-
-// Statik dosyaları serve et
-app.use(express.static(path.join(__dirname)));
-
-// Ana sayfa route'u
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // API routes
@@ -228,6 +231,11 @@ app.delete('/api/courses/clear', async (req, res) => {
             error: error.message
         });
     }
+});
+
+// Catch all route for SPA
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Port ayarı
