@@ -4,126 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli - HangaarGym</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="js/admin-auth.js"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
         .admin-container {
             max-width: 1200px;
-            margin: 20px auto;
+            margin: 0 auto;
+            background: white;
             padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .admin-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
         }
 
-        .admin-header img {
-            width: 30px;
-            height: 30px;
+        .admin-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .admin-title img {
+            width: 24px;
+            height: 24px;
             margin-right: 10px;
         }
 
-        .admin-header h1 {
+        .admin-title h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
             color: #333;
         }
 
-        .user-list {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .user-list th, .user-list td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .user-list th {
-            background-color: #f5f5f5;
-            font-weight: 600;
-        }
-
-        .user-list tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
+        .logout-btn {
+            padding: 8px 15px;
+            background-color: #dc3545;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-right: 5px;
             font-size: 14px;
         }
 
-        .view-btn {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .action-btn:hover {
-            opacity: 0.9;
+        .logout-btn:hover {
+            background-color: #c82333;
         }
 
         .stats-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
         .stat-card {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 5px;
             text-align: center;
         }
 
         .stat-card h3 {
             margin: 0;
+            font-size: 14px;
             color: #666;
-            font-size: 16px;
         }
 
         .stat-card .number {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #333;
-            margin-top: 10px;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-weight: normal;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
         }
 
         .search-bar {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-bottom: 20px;
-            font-size: 16px;
+            margin-bottom: 15px;
         }
 
-        .search-bar:focus {
-            outline: none;
-            border-color: #007bff;
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .btn-view {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="admin-container">
         <div class="admin-header">
-            <img src="images/admin-icon.png" alt="Admin">
-            <h1>Admin Paneli</h1>
+            <div class="admin-title">
+                <img src="images/admin-icon.png" alt="Admin">
+                <h1>Admin Paneli</h1>
+            </div>
+            <button class="logout-btn" onclick="adminLogout()">Çıkış Yap</button>
         </div>
 
         <div class="stats-container">
@@ -143,7 +165,7 @@
 
         <input type="text" class="search-bar" id="searchInput" placeholder="Üye ara..." onkeyup="searchUsers()">
 
-        <table class="user-list">
+        <table>
             <thead>
                 <tr>
                     <th>Ad Soyad</th>
@@ -160,16 +182,21 @@
     </div>
 
     <script>
-        // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', () => {
+            // Oturum kontrolü
+            if (!checkAdminAuth()) return;
+            
             loadUsers();
             loadStats();
         });
 
-        // Kullanıcıları yükle
         async function loadUsers() {
             try {
-                const response = await fetch('/api/admin/users');
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
                 const data = await response.json();
 
                 if (data.success) {
@@ -184,8 +211,8 @@
                             <td>${new Date(user.joinDate).toLocaleDateString()}</td>
                             <td>${user.activeCourses.length}</td>
                             <td>
-                                <button class="action-btn view-btn" onclick="viewUser('${user._id}')">Detay</button>
-                                <button class="action-btn delete-btn" onclick="deleteUser('${user._id}')">Sil</button>
+                                <button class="btn btn-view" onclick="viewUser('${user._id}')">Detay</button>
+                                <button class="btn btn-delete" onclick="deleteUser('${user._id}')">Sil</button>
                             </td>
                         `;
                         tableBody.appendChild(row);
@@ -196,10 +223,13 @@
             }
         }
 
-        // İstatistikleri yükle
         async function loadStats() {
             try {
-                const response = await fetch('/api/admin/stats');
+                const response = await fetch('/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
                 const data = await response.json();
 
                 if (data.success) {
@@ -212,7 +242,6 @@
             }
         }
 
-        // Kullanıcı ara
         function searchUsers() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const rows = document.getElementById('userTableBody').getElementsByTagName('tr');
@@ -223,13 +252,10 @@
             });
         }
 
-        // Kullanıcı detay
         function viewUser(userId) {
-            // Kullanıcı detay sayfasına yönlendir
             window.location.href = `/admin/users/${userId}`;
         }
 
-        // Kullanıcı sil
         async function deleteUser(userId) {
             if (!confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
                 return;
@@ -237,7 +263,10 @@
 
             try {
                 const response = await fetch(`/api/admin/users/${userId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
                 });
 
                 const data = await response.json();
@@ -249,7 +278,7 @@
                     alert('Kullanıcı silinirken bir hata oluştu');
                 }
             } catch (error) {
-                console.error('Kullanıcı silme hatası:', error);
+                console.error('Kullanıcı silinirken hata:', error);
                 alert('Kullanıcı silinirken bir hata oluştu');
             }
         }
