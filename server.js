@@ -36,13 +36,33 @@ const staticOptions = {
 };
 
 // Statik dosyaları serve et
-app.use(express.static('public', staticOptions));
-app.use('/videos', express.static(path.join(__dirname, 'videos'), staticOptions));
-app.use('/images', express.static(path.join(__dirname, 'images'), staticOptions));
+app.use(express.static(path.join(__dirname)));
+app.use('/videos', express.static(path.join(__dirname, 'videos')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
-app.use('/*.js', express.static(path.join(__dirname), staticOptions));
+app.use('/*.js', express.static(path.join(__dirname)));
 
 // HTML dosyaları için route'lar
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'profile.html'));
+});
+
 app.get('/personal-training.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'personal-training.html'));
 });
@@ -53,11 +73,6 @@ app.get('/sporculara-ozel-antrenmanlar.html', (req, res) => {
 
 app.get('/ozel-grup-calismalari.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'ozel-grup-calismalari.html'));
-});
-
-// Ana sayfa route'u
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Admin girişi endpoint'i
