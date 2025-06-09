@@ -23,14 +23,17 @@
             const skipButton = document.getElementById('skip-video');
             let videoLoaded = false;
             let videoEnded = false;
+            let manualSkip = false;
 
             function handleVideoError() {
-                fadeOutAndHide();
+                if (!manualSkip) {
+                    fadeOutAndHide();
+                }
             }
 
             function fadeOutAndHide() {
-                // Video bitmeden önce sadece "Videoyu Atla" butonuyla geçiş yapılabilir
-                if (!videoEnded && !skipButton.clicked) {
+                // Sadece video bittiğinde veya "Videoyu Atla" butonuna basıldığında geçiş yap
+                if (!videoEnded && !manualSkip) {
                     return;
                 }
                 loadingScreen.classList.add('fade-out');
@@ -49,25 +52,25 @@
             });
 
             loadingVideo.addEventListener('ended', function() {
-                if (videoLoaded) {
-                    videoEnded = true;
-                    fadeOutAndHide();
-                }
+                videoEnded = true;
+                fadeOutAndHide();
             });
 
             // Videoyu Atla butonuna tıklandığında
             skipButton.addEventListener('click', function() {
-                skipButton.clicked = true;
+                manualSkip = true;
                 fadeOutAndHide();
             });
 
-            // Video yükleme denemesi
+            // Video yükleme ve oynatma
             try {
                 loadingVideo.load();
                 loadingVideo.play().catch(function(error) {
+                    console.error('Video oynatma hatası:', error);
                     handleVideoError();
                 });
             } catch (error) {
+                console.error('Video yükleme hatası:', error);
                 handleVideoError();
             }
         });
