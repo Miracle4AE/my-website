@@ -13,9 +13,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MIME tipleri için express.static ayarları
+// MIME type'ları ve header'ları ayarla
 const staticOptions = {
-    setHeaders: (res, path, stat) => {
+    setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
             res.set('Content-Type', 'application/javascript');
         }
@@ -36,13 +36,28 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const JWT_SECRET = process.env.JWT_SECRET || 'gizli-anahtar-123';
 
 // Statik dosyaları serve et
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), staticOptions));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/videos', express.static(path.join(__dirname, 'videos')));
 app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
-app.use('/*.js', express.static(path.join(__dirname), staticOptions));
 
 // HTML dosyaları için route'lar
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'profile.html'));
+});
+
 app.get('/personal-training.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'personal-training.html'));
 });
@@ -53,11 +68,6 @@ app.get('/sporculara-ozel-antrenmanlar.html', (req, res) => {
 
 app.get('/ozel-grup-calismalari.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'ozel-grup-calismalari.html'));
-});
-
-// Ana sayfa route'u
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Admin girişi endpoint'i
