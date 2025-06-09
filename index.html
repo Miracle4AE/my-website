@@ -9,11 +9,36 @@
 </head>
 <body>
     <div id="loading-screen">
-        <video class="loading-video" autoplay muted>
+        <button id="skip-video" class="skip-button">Videoyu Atla</button>
+        <video id="loading-video" class="loading-video" autoplay muted>
             <source src="videos/large.mp4" type="video/mp4">
         </video>
-        <div class="loading-text">Değişime Hazır Ol!</div>
+        <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingVideo = document.getElementById('loading-video');
+            const loadingText = document.getElementById('loading-text');
+            const skipButton = document.getElementById('skip-video');
+
+            // Video bittiğinde loading ekranını kaldır
+            loadingVideo.addEventListener('ended', function() {
+                loadingScreen.style.display = 'none';
+            });
+
+            // Loading yazısını 3 saniye sonra gizle
+            setTimeout(() => {
+                loadingText.style.opacity = '0';
+            }, 3000);
+
+            // Videoyu Atla butonuna tıklandığında
+            skipButton.addEventListener('click', function() {
+                loadingScreen.style.display = 'none';
+            });
+        });
+    </script>
 
     <header>
         <nav class="navbar">
