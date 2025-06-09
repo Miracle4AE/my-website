@@ -25,6 +25,7 @@
             const skipButton = document.getElementById('skip-video');
             const debugInfo = document.getElementById('debug-info');
             let videoLoaded = false;
+            let videoEnded = false;
 
             // Video dosyasının varlığını kontrol et
             fetch('./videos/large.mp4')
@@ -53,6 +54,17 @@
                 fadeOutAndHide();
             }
 
+            function fadeOutAndHide() {
+                // Video bitmeden önce sadece "Videoyu Atla" butonuyla geçiş yapılabilir
+                if (!videoEnded && !skipButton.clicked) {
+                    return;
+                }
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }
+
             // Video yükleme durumlarını izle
             loadingVideo.addEventListener('loadstart', () => updateDebugInfo('Video yüklenmeye başladı'));
             loadingVideo.addEventListener('waiting', () => updateDebugInfo('Video veri bekliyor'));
@@ -61,20 +73,10 @@
             loadingVideo.addEventListener('suspend', () => updateDebugInfo('Video yükleme askıya alındı'));
             loadingVideo.addEventListener('stalled', () => updateDebugInfo('Video yükleme durdu'));
             
-            // Video yüklendiğinde kaynak bilgisini göster
             loadingVideo.addEventListener('loadedmetadata', () => {
                 updateDebugInfo('Video kaynağı: ' + loadingVideo.currentSrc);
+                updateDebugInfo('Video süresi: ' + loadingVideo.duration);
             });
-
-            // Video hızını normal hıza ayarla
-            loadingVideo.playbackRate = 1.0;
-
-            function fadeOutAndHide() {
-                loadingScreen.classList.add('fade-out');
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 1000);
-            }
 
             loadingVideo.addEventListener('loadeddata', function() {
                 videoLoaded = true;
@@ -96,11 +98,16 @@
             loadingVideo.addEventListener('ended', function() {
                 if (videoLoaded) {
                     updateDebugInfo('Video bitti');
+                    videoEnded = true;
                     fadeOutAndHide();
                 }
             });
 
-            skipButton.addEventListener('click', fadeOutAndHide);
+            // Videoyu Atla butonuna tıklandığında
+            skipButton.addEventListener('click', function() {
+                skipButton.clicked = true;
+                fadeOutAndHide();
+            });
 
             // Video yükleme denemesi
             try {
@@ -114,6 +121,7 @@
                 handleVideoError();
             }
 
+            // 5 saniye içinde video yüklenmezse hata ver ama otomatik geçiş yapma
             setTimeout(() => {
                 if (!videoLoaded) {
                     updateDebugInfo('Video 5 saniye içinde yüklenemedi');
