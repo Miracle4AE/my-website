@@ -20,18 +20,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
             const loadingVideo = document.getElementById('loading-video');
-            const loadingText = document.getElementById('loading-text');
             const skipButton = document.getElementById('skip-video');
 
             // Video bittiğinde loading ekranını kaldır
             loadingVideo.addEventListener('ended', function() {
                 loadingScreen.style.display = 'none';
             });
-
-            // Loading yazısını 3 saniye sonra gizle
-            setTimeout(() => {
-                loadingText.style.opacity = '0';
-            }, 3000);
 
             // Videoyu Atla butonuna tıklandığında
             skipButton.addEventListener('click', function() {
