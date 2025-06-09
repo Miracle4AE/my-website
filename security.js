@@ -20,36 +20,40 @@ const limiter = rateLimit({
 });
 
 // Şifre hashleme fonksiyonu
-const hashPassword = async (password) => {
-    return await bcrypt.hash(password, SALT_ROUNDS);
+const hashPassword = (password) => {
+    // Frontend'de şifre hash'leme yapmıyoruz, bu backend'de yapılacak
+    return password;
 };
 
 // Şifre doğrulama fonksiyonu
-const verifyPassword = async (password, hashedPassword) => {
-    return await bcrypt.compare(password, hashedPassword);
+const verifyPassword = (password, hashedPassword) => {
+    // Frontend'de şifre doğrulama yapmıyoruz, bu backend'de yapılacak
+    return password === hashedPassword;
 };
 
 // JWT Token oluşturma
-const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRES_IN
-    });
+const generateToken = (payload) => {
+    // Frontend'de token oluşturma yapmıyoruz, bu backend'de yapılacak
+    return null;
 };
 
 // JWT Token doğrulama
 const verifyToken = (token) => {
-    try {
-        return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-        return null;
-    }
+    // Frontend'de token doğrulama yapmıyoruz, bu backend'de yapılacak
+    return null;
 };
 
 // SQL Injection koruması için input temizleme
 const sanitizeInput = (input) => {
+    // XSS koruması için basit bir sanitize fonksiyonu
     if (typeof input !== 'string') return input;
-    // SQL injection karakterlerini temizle
-    return input.replace(/['";\\]/g, '');
+    return input
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;');
 };
 
 // CSRF Token oluşturma
@@ -121,33 +125,9 @@ const checkPayload = (body) => {
 // Brute force koruması için başarısız giriş denemelerini takip et
 const loginAttempts = new Map();
 
-const checkBruteForce = (ip) => {
-    if (!loginAttempts.has(ip)) {
-        loginAttempts.set(ip, {
-            count: 0,
-            firstAttempt: Date.now()
-        });
-        return true;
-    }
-
-    const attempt = loginAttempts.get(ip);
-    const timeDiff = Date.now() - attempt.firstAttempt;
-
-    // 15 dakika içinde 5 başarısız deneme limiti
-    if (attempt.count >= 5 && timeDiff < 900000) {
-        return false;
-    }
-
-    // 15 dakika geçtiyse sayacı sıfırla
-    if (timeDiff >= 900000) {
-        loginAttempts.set(ip, {
-            count: 0,
-            firstAttempt: Date.now()
-        });
-    }
-
-    attempt.count++;
-    return true;
+const checkBruteForce = (email) => {
+    // Frontend'de brute force kontrolü yapmıyoruz, bu backend'de yapılacak
+    return false;
 };
 
 module.exports = {

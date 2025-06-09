@@ -1,12 +1,3 @@
-const {
-    hashPassword,
-    verifyPassword,
-    generateToken,
-    verifyToken,
-    sanitizeInput,
-    checkBruteForce
-} = require('./security');
-
 // API endpoint'leri
 const API_URL = window.location.origin;
 
@@ -187,22 +178,4 @@ function isStrongPassword(password) {
     // En az 1 özel karakter
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
-}
-
-// Örnek kullanıcı bulma fonksiyonu (veritabanı entegrasyonu gerekir)
-async function findUserByEmail(email) {
-    // Bu kısım veritabanı entegrasyonu ile değiştirilmeli
-    return null;
-}
-
-module.exports = {
-    register,
-    login,
-    isValidEmail,
-    isStrongPassword,
-    checkAuth,
-    logout,
-    getProfile,
-    updateProfile,
-    getAuthHeader
-}; 
+} 
