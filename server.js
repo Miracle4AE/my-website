@@ -31,16 +31,18 @@ const staticOptions = {
     setHeaders: (res, path, stat) => {
         if (path.endsWith('.js')) {
             res.set('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.svg')) {
+            res.set('Content-Type', 'image/svg+xml');
         }
     }
 };
 
 // Statik dosyaları serve et
-app.use(express.static(path.join(__dirname)));
-app.use('/videos', express.static(path.join(__dirname, 'videos')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname), staticOptions));
+app.use('/videos', express.static(path.join(__dirname, 'videos'), staticOptions));
+app.use('/images', express.static(path.join(__dirname, 'images'), staticOptions));
 app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
-app.use('/*.js', express.static(path.join(__dirname)));
+app.use('/*.js', express.static(path.join(__dirname), staticOptions));
 
 // HTML dosyaları için route'lar
 app.get('/', (req, res) => {
