@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Girişi - HangaarGym</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,9 +31,9 @@
             margin-bottom: 20px;
         }
 
-        .login-header img {
-            width: 24px;
-            height: 24px;
+        .login-header i {
+            font-size: 24px;
+            color: #333;
             margin-right: 10px;
             vertical-align: middle;
         }
@@ -96,7 +97,7 @@
 <body>
     <div class="login-container">
         <div class="login-header">
-            <img src="images/admin-icon.png" alt="Admin">
+            <i class="fas fa-user-shield"></i>
             <h1>Admin Girişi</h1>
         </div>
         <form id="loginForm" onsubmit="return handleLogin(event)">
@@ -133,6 +134,7 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    localStorage.setItem('adminToken', data.token);
                     window.location.href = '/admin.html';
                 } else {
                     errorMessage.style.display = 'block';
