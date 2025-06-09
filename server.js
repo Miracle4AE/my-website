@@ -51,6 +51,10 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+app.get('/admin-login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-login.html'));
+});
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -78,14 +82,19 @@ app.get('/ozel-grup-calismalari.html', (req, res) => {
 // Admin girişi endpoint'i
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
+    
+    console.log('Admin giriş denemesi:', { username, password });
+    console.log('Beklenen:', { ADMIN_USERNAME, ADMIN_PASSWORD });
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+        console.log('Giriş başarılı, token oluşturuldu');
         res.json({
             success: true,
             token: token
         });
     } else {
+        console.log('Giriş başarısız: Kullanıcı adı veya şifre hatalı');
         res.status(401).json({
             success: false,
             message: 'Geçersiz kullanıcı adı veya şifre'
