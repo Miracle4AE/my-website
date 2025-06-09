@@ -11,8 +11,7 @@
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
         <video id="loading-video" class="loading-video" autoplay muted preload="auto" crossorigin="anonymous">
-            <source src="./videos/large.mp4" type="video/mp4" onerror="handleVideoError()">
-            <source src="./videos/stock-footage-man-coach-and-battle-rope-at-gym-for-workout-exercise-or-muscle-endurance-in-fitness-motivation.webm" type="video/webm" onerror="handleVideoError()">
+            <source src="./videos/istockphoto-1208364797-640_adpp_is.mp4" type="video/mp4" onerror="handleVideoError()">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
     </div>
@@ -51,11 +50,8 @@
 
             loadingVideo.addEventListener('ended', function() {
                 if (videoLoaded) {
-                    // Video bittikten 0.2 saniye sonra loading ekranını kapat
-                    setTimeout(() => {
-                        videoEnded = true;
-                        fadeOutAndHide();
-                    }, 200); // 200 milisaniye = 0.2 saniye
+                    videoEnded = true;
+                    fadeOutAndHide();
                 }
             });
 
