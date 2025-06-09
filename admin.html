@@ -137,6 +137,121 @@
             background-color: #dc3545;
             color: white;
         }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-btn {
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .close {
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .status-active {
+            color: #28a745;
+        }
+
+        .status-inactive {
+            color: #dc3545;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -146,7 +261,64 @@
                 <i class="fas fa-user-shield"></i>
                 <h1>Admin Paneli</h1>
             </div>
-            <button class="logout-btn" onclick="adminLogout()">Çıkış Yap</button>
+            <div class="header-buttons">
+                <button class="add-btn" onclick="showAddUserModal()"><i class="fas fa-user-plus"></i> Yeni Üye Ekle</button>
+                <button class="logout-btn" onclick="adminLogout()">Çıkış Yap</button>
+            </div>
+        </div>
+
+        <!-- Yeni Üye Ekleme Modal -->
+        <div id="addUserModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Yeni Üye Ekle</h2>
+                    <span class="close" onclick="closeAddUserModal()">&times;</span>
+                </div>
+                <form id="addUserForm" onsubmit="return handleAddUser(event)">
+                    <div class="form-group">
+                        <label for="firstName">Ad</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Soyad</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefon</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="membershipType">Üyelik Tipi</label>
+                        <select id="membershipType" name="membershipType" required>
+                            <option value="standard">Standart Üyelik</option>
+                            <option value="student">Öğrenci Üyelik</option>
+                            <option value="premium">Premium Üyelik</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Başlangıç Tarihi</label>
+                        <input type="date" id="startDate" name="startDate" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Üye Ekle</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Üye Detay Modal -->
+        <div id="userDetailModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Üye Detayları</h2>
+                    <span class="close" onclick="closeUserDetailModal()">&times;</span>
+                </div>
+                <div id="userDetailContent">
+                    <!-- Üye detayları JavaScript ile doldurulacak -->
+                </div>
+            </div>
         </div>
 
         <div class="stats-container">
@@ -164,15 +336,17 @@
             </div>
         </div>
 
-        <input type="text" class="search-bar" id="searchInput" placeholder="Üye ara..." onkeyup="searchUsers()">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Üye ara (Ad, soyad veya email)..." onkeyup="searchUsers()">
 
         <table>
             <thead>
                 <tr>
                     <th>Ad Soyad</th>
                     <th>Email</th>
-                    <th>Kayıt Tarihi</th>
-                    <th>Aktif Dersler</th>
+                    <th>Telefon</th>
+                    <th>Üyelik Tipi</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Durum</th>
                     <th>İşlemler</th>
                 </tr>
             </thead>
@@ -209,10 +383,13 @@
                         row.innerHTML = `
                             <td>${user.firstName} ${user.lastName}</td>
                             <td>${user.email}</td>
-                            <td>${new Date(user.joinDate).toLocaleDateString()}</td>
-                            <td>${user.activeCourses.length}</td>
+                            <td>${user.phone}</td>
+                            <td>${user.membershipType}</td>
+                            <td>${new Date(user.startDate).toLocaleDateString()}</td>
+                            <td><span class="status-${user.status}">${user.status === 'active' ? 'Aktif' : 'Pasif'}</span></td>
                             <td>
-                                <button class="btn btn-view" onclick="viewUser('${user._id}')">Detay</button>
+                                <button class="btn btn-view" onclick="showUserDetailModal('${user._id}')">Detay</button>
+                                <button class="btn btn-edit" onclick="editUser('${user._id}')">Düzenle</button>
                                 <button class="btn btn-delete" onclick="deleteUser('${user._id}')">Sil</button>
                             </td>
                         `;
@@ -253,8 +430,92 @@
             });
         }
 
-        function viewUser(userId) {
-            window.location.href = `/admin/users/${userId}`;
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'block';
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+
+        function showUserDetailModal(userId) {
+            document.getElementById('userDetailModal').style.display = 'block';
+            loadUserDetails(userId);
+        }
+
+        function closeUserDetailModal() {
+            document.getElementById('userDetailModal').style.display = 'none';
+        }
+
+        async function handleAddUser(event) {
+            event.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                membershipType: document.getElementById('membershipType').value,
+                startDate: document.getElementById('startDate').value,
+                status: 'active'
+            };
+
+            try {
+                const response = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Üye başarıyla eklendi');
+                    closeAddUserModal();
+                    document.getElementById('addUserForm').reset();
+                    loadUsers();
+                } else {
+                    alert('Üye eklenirken bir hata oluştu: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Üye ekleme hatası:', error);
+                alert('Üye eklenirken bir hata oluştu');
+            }
+        }
+
+        async function loadUserDetails(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const user = data.data;
+                    document.getElementById('userDetailContent').innerHTML = `
+                        <div class="user-details">
+                            <h3>${user.firstName} ${user.lastName}</h3>
+                            <p><strong>Email:</strong> ${user.email}</p>
+                            <p><strong>Telefon:</strong> ${user.phone}</p>
+                            <p><strong>Üyelik Tipi:</strong> ${user.membershipType}</p>
+                            <p><strong>Başlangıç Tarihi:</strong> ${new Date(user.startDate).toLocaleDateString()}</p>
+                            <p><strong>Durum:</strong> <span class="status-${user.status}">${user.status === 'active' ? 'Aktif' : 'Pasif'}</span></p>
+                            <div class="detail-actions">
+                                <button class="btn btn-edit" onclick="editUser('${user._id}')">Düzenle</button>
+                                <button class="btn btn-delete" onclick="deleteUser('${user._id}')">Sil</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Üye detayları yüklenirken hata:', error);
+            }
         }
 
         async function deleteUser(userId) {
@@ -281,6 +542,18 @@
             } catch (error) {
                 console.error('Kullanıcı silinirken hata:', error);
                 alert('Kullanıcı silinirken bir hata oluştu');
+            }
+        }
+
+        // Modallar dışına tıklandığında kapatma
+        window.onclick = function(event) {
+            const addUserModal = document.getElementById('addUserModal');
+            const userDetailModal = document.getElementById('userDetailModal');
+            if (event.target === addUserModal) {
+                addUserModal.style.display = 'none';
+            }
+            if (event.target === userDetailModal) {
+                userDetailModal.style.display = 'none';
             }
         }
     </script>

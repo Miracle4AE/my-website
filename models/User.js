@@ -4,11 +4,11 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: [true, 'İsim gerekli']
+        required: [true, 'Ad alanı zorunludur']
     },
     lastName: {
         type: String,
-        required: [true, 'Soyisim gerekli']
+        required: [true, 'Soyad alanı zorunludur']
     },
     username: {
         type: String,
@@ -17,9 +17,13 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: [true, 'Email gerekli'],
+        required: [true, 'Email alanı zorunludur'],
         unique: true,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Geçerli bir email adresi giriniz']
+    },
+    phone: {
+        type: String,
+        required: [true, 'Telefon alanı zorunludur']
     },
     password: {
         type: String,
@@ -39,10 +43,24 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    membershipType: {
+        type: String,
+        enum: ['standard', 'student', 'premium'],
+        default: 'standard'
+    },
+    startDate: {
+        type: Date,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'active'
+    },
     activeCourses: [{
         name: String,
-        date: Date,
-        time: String
+        startDate: Date,
+        endDate: Date
     }],
     paidFees: [{
         amount: Number,
