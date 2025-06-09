@@ -42,6 +42,19 @@ app.use('/images', express.static(path.join(__dirname, 'images'), staticOptions)
 app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
 app.use('/*.js', express.static(path.join(__dirname), staticOptions));
 
+// HTML dosyaları için route'lar
+app.get('/personal-training.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'personal-training.html'));
+});
+
+app.get('/sporculara-ozel-antrenmanlar.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'sporculara-ozel-antrenmanlar.html'));
+});
+
+app.get('/ozel-grup-calismalari.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ozel-grup-calismalari.html'));
+});
+
 // Ana sayfa route'u
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
