@@ -10,10 +10,12 @@
 <body>
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
-        <video id="loading-video" class="loading-video" autoplay muted preload="auto">
-            <source src="videos/large.mp4" type="video/mp4">
+        <video id="loading-video" class="loading-video" autoplay muted preload="auto" poster="videos/poster.jpg">
+            <source src="videos/large.mp4" type="video/mp4" onerror="handleVideoError()">
+            <source src="videos/stock-footage-man-coach-and-battle-rope-at-gym-for-workout-exercise-or-muscle-endurance-in-fitness-motivation.webm" type="video/webm" onerror="handleVideoError()">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
+        <div id="debug-info" style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 12px; display: none;"></div>
     </div>
 
     <script>
@@ -21,6 +23,30 @@
             const loadingScreen = document.getElementById('loading-screen');
             const loadingVideo = document.getElementById('loading-video');
             const skipButton = document.getElementById('skip-video');
+            const debugInfo = document.getElementById('debug-info');
+            let videoLoaded = false;
+
+            function updateDebugInfo(message) {
+                debugInfo.style.display = 'block';
+                debugInfo.innerHTML += message + '<br>';
+                console.log(message);
+            }
+
+            function handleVideoError() {
+                updateDebugInfo('Video yüklenemedi veya oynatılamadı');
+                updateDebugInfo('Video durumu: ' + loadingVideo.readyState);
+                updateDebugInfo('Video ağ durumu: ' + loadingVideo.networkState);
+                updateDebugInfo('Video hata kodu: ' + (loadingVideo.error ? loadingVideo.error.code : 'Yok'));
+                fadeOutAndHide();
+            }
+
+            // Video yükleme durumlarını izle
+            loadingVideo.addEventListener('loadstart', () => updateDebugInfo('Video yüklenmeye başladı'));
+            loadingVideo.addEventListener('waiting', () => updateDebugInfo('Video veri bekliyor'));
+            loadingVideo.addEventListener('canplay', () => updateDebugInfo('Video oynatılabilir'));
+            loadingVideo.addEventListener('canplaythrough', () => updateDebugInfo('Video tamamen yüklenebilir'));
+            loadingVideo.addEventListener('suspend', () => updateDebugInfo('Video yükleme askıya alındı'));
+            loadingVideo.addEventListener('stalled', () => updateDebugInfo('Video yükleme durdu'));
 
             // Video hızını normal hıza ayarla
             loadingVideo.playbackRate = 1.0;
@@ -32,44 +58,52 @@
                 }, 1000);
             }
 
-            // Video yüklenme durumunu kontrol et
             loadingVideo.addEventListener('loadeddata', function() {
-                console.log('Video yüklendi, süre:', loadingVideo.duration);
-                // Video hızını tekrar kontrol et
+                videoLoaded = true;
+                updateDebugInfo('Video yüklendi, süre: ' + loadingVideo.duration);
                 loadingVideo.playbackRate = 1.0;
             });
 
-            // Video hata durumunu yakala
             loadingVideo.addEventListener('error', function(e) {
-                console.error('Video yüklenirken hata:', loadingVideo.error);
+                updateDebugInfo('Video yüklenirken hata: ' + (loadingVideo.error ? loadingVideo.error.message : 'Bilinmeyen hata'));
+                handleVideoError();
             });
 
-            // Video ilerleme durumunu kontrol et
             loadingVideo.addEventListener('timeupdate', function() {
-                console.log('Video ilerleme:', loadingVideo.currentTime, '/', loadingVideo.duration);
+                if (videoLoaded) {
+                    updateDebugInfo('Video ilerleme: ' + loadingVideo.currentTime + ' / ' + loadingVideo.duration);
+                }
             });
 
-            // Video bittiğinde loading ekranını yumuşak şekilde kaldır
             loadingVideo.addEventListener('ended', function() {
-                console.log('Video bitti');
-                fadeOutAndHide();
+                if (videoLoaded) {
+                    updateDebugInfo('Video bitti');
+                    fadeOutAndHide();
+                }
             });
 
-            // Videoyu Atla butonuna tıklandığında
             skipButton.addEventListener('click', fadeOutAndHide);
 
-            // Video otomatik başlamazsa başlat
             loadingVideo.play().catch(function(error) {
-                console.log("Video otomatik başlatılamadı:", error);
+                updateDebugInfo('Video otomatik başlatılamadı: ' + error.message);
+                handleVideoError();
             });
 
-            // Video hızını her durumda kontrol et
-            setInterval(() => {
-                if (loadingVideo.playbackRate !== 1.0) {
-                    loadingVideo.playbackRate = 1.0;
+            setTimeout(() => {
+                if (!videoLoaded) {
+                    updateDebugInfo('Video 5 saniye içinde yüklenemedi');
+                    handleVideoError();
                 }
-            }, 1000);
+            }, 5000);
         });
+
+        window.handleVideoError = function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.classList.add('fade-out');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        };
     </script>
 
     <header>
