@@ -1,5 +1,5 @@
 // API endpoint'leri
-const API_URL = window.location.origin;
+const API_URL = 'https://hangaargym-app-2ac2b725c08c.herokuapp.com';
 
 // Oturum kontrolü ve navbar güncelleme
 function checkAuth() {

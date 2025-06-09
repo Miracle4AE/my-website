@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Slider görselleri
 const sliderImages = [
-    'images/fitness-back.jpg.png',
-    'images/Screenshot_1.png',
-    'images/Screenshot_2.png',
-    'images/Screenshot_3.png',
-    'images/Screenshot_4.png'
+    '/images/fitness-back.jpg.png',
+    '/images/Screenshot_1.png',
+    '/images/Screenshot_2.png',
+    '/images/Screenshot_3.png',
+    '/images/Screenshot_4.png'
 ];
 
 let currentSlide = 0;
