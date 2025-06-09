@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -13,9 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB bağlantısı
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://sahinatakan:Ae080919941827.@cluster0.ljbdqyr.mongodb.net/cluster0?retryWrites=true&w=majority';
-
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -28,7 +27,10 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const JWT_SECRET = process.env.JWT_SECRET || 'gizli-anahtar-123';
 
 // Statik dosyaları serve et
-app.use(express.static(path.join(__dirname)));
+app.use(express.static('public'));
+app.use('/videos', express.static(path.join(__dirname, 'videos')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
 
 // Ana sayfa route'u
 app.get('/', (req, res) => {
