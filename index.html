@@ -22,6 +22,9 @@
             const loadingVideo = document.getElementById('loading-video');
             const skipButton = document.getElementById('skip-video');
 
+            // Video hızını normal hıza ayarla
+            loadingVideo.playbackRate = 1.0;
+
             function fadeOutAndHide() {
                 loadingScreen.classList.add('fade-out');
                 setTimeout(() => {
@@ -32,6 +35,8 @@
             // Video yüklenme durumunu kontrol et
             loadingVideo.addEventListener('loadeddata', function() {
                 console.log('Video yüklendi, süre:', loadingVideo.duration);
+                // Video hızını tekrar kontrol et
+                loadingVideo.playbackRate = 1.0;
             });
 
             // Video hata durumunu yakala
@@ -57,6 +62,13 @@
             loadingVideo.play().catch(function(error) {
                 console.log("Video otomatik başlatılamadı:", error);
             });
+
+            // Video hızını her durumda kontrol et
+            setInterval(() => {
+                if (loadingVideo.playbackRate !== 1.0) {
+                    loadingVideo.playbackRate = 1.0;
+                }
+            }, 1000);
         });
     </script>
 
