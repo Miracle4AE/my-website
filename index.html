@@ -51,8 +51,11 @@
 
             loadingVideo.addEventListener('ended', function() {
                 if (videoLoaded) {
-                    videoEnded = true;
-                    fadeOutAndHide();
+                    // Video bittikten 0.2 saniye sonra loading ekranını kapat
+                    setTimeout(() => {
+                        videoEnded = true;
+                        fadeOutAndHide();
+                    }, 200); // 200 milisaniye = 0.2 saniye
                 }
             });
 
