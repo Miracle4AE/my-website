@@ -46,6 +46,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin/users', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-users.html'));
+});
+
+app.get('/admin/courses', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-courses.html'));
+});
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -141,40 +153,90 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Admin: Tüm kullanıcıları getir
-app.get('/api/users', async (req, res) => {
+// Admin middleware
+const adminAuth = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: 'Token bulunamadı'
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Bu işlem için yetkiniz yok'
+            });
+        }
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Geçersiz token'
+        });
+    }
+};
+
+// Admin API routes
+app.get('/api/admin/users', adminAuth, async (req, res) => {
     try {
         const users = await User.find();
-        res.status(200).json({
+        res.json({
             success: true,
             data: users
         });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            error: error.message
+            message: error.message
         });
     }
 });
 
-// Tek bir kullanıcının detaylarını getir
-app.get('/api/users/:id', async (req, res) => {
+app.get('/api/admin/courses', adminAuth, async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const users = await User.find().select('username activeCourses');
+        const courses = users.reduce((acc, user) => {
+            return acc.concat(user.activeCourses.map(course => ({
+                ...course.toObject(),
+                username: user.username
+            })));
+        }, []);
+        
+        res.json({
+            success: true,
+            data: courses
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+app.delete('/api/admin/users/:id', adminAuth, async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'Kullanıcı bulunamadı'
+                message: 'Kullanıcı bulunamadı'
             });
         }
-        res.status(200).json({
+        res.json({
             success: true,
-            data: user
+            data: {}
         });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            error: error.message
+            message: error.message
         });
     }
 });
