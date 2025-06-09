@@ -22,15 +22,18 @@
             const loadingVideo = document.getElementById('loading-video');
             const skipButton = document.getElementById('skip-video');
 
-            // Video bittiğinde loading ekranını kaldır
-            loadingVideo.addEventListener('ended', function() {
-                loadingScreen.style.display = 'none';
-            });
+            function fadeOutAndHide() {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000); // 1 saniye sonra tamamen kaldır (transition süresiyle aynı)
+            }
+
+            // Video bittiğinde loading ekranını yumuşak şekilde kaldır
+            loadingVideo.addEventListener('ended', fadeOutAndHide);
 
             // Videoyu Atla butonuna tıklandığında
-            skipButton.addEventListener('click', function() {
-                loadingScreen.style.display = 'none';
-            });
+            skipButton.addEventListener('click', fadeOutAndHide);
         });
     </script>
 
