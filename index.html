@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Merkezi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="loading-screen">
+        <video class="loading-video" autoplay muted>
+            <source src="videos/large.mp4" type="video/mp4">
+        </video>
+        <div class="loading-text">Değişime Hazır Ol!</div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="#" class="nav-item">Ana Sayfa</a>
+                <a href="#" class="nav-item">Fiyatlar</a>
+                <a href="#" class="nav-item">Kampanyalar</a>
+                <a href="#" class="nav-item">Antrenman Önerici</a>
+                <a href="#" class="nav-item">Grup Dersleri</a>
+                <a href="#" class="nav-item">Hakkımızda</a>
+            </div>
+            <div class="login-section">
+                <input type="text" placeholder="Kullanıcı adı">
+                <input type="password" placeholder="Şifre">
+                <button class="login-btn">Giriş Yap</button>
+                <a href="register.html" class="register-btn">Üye Ol</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="slider-container">
+            <div class="slider">
+                <!-- Slider içeriği JavaScript ile doldurulacak -->
+            </div>
+            <button class="slider-btn prev">&#10094;</button>
+            <button class="slider-btn next">&#10095;</button>
+        </div>
+
+        <div class="section-buttons">
+            <div class="button-container">
+                <button class="section-btn" onclick="window.location.href='personal-training.html'">
+                    <span class="btn-number">PERSONAL TRAINING</span>
+                    <span class="btn-text">Personel training, amacı daha hızlı sonuca ulaşma veya belirgin bir hedef isteyen kişilere bire bir eğitim olanağı, rehberlik, tanıtım ve motivasyon vb sağlamaktır.</span>
+                </button>
+                <button class="section-btn" onclick="window.location.href='sporculara-ozel-antrenmanlar.html'">
+                    <span class="btn-number">SPORCULARA ÖZEL ANTRENMANLAR</span>
+                    <span class="btn-text">Sporcunun branşında performansını arttırmayı ve form(verimlilik) düzeyini yüksek tutmayı hedefler. Sporcuların kendi branşılarına ve hedeflerine özel olarak, antrenörlerimiz bireysel program hazırlayacak ve uygulayacaklardır.</span>
+                </button>
+                <button class="section-btn" onclick="window.location.href='ozel-grup-calismalari.html'">
+                    <span class="btn-number">ÖZEL GRUP ÇALIŞMALARI</span>
+                    <span class="btn-text">Grup motivasyonu ile spor yapmamnın keyfini yaşayın. Salonumuzda spining, crosstraning, trx ve zumba grup derslerine katılıp günün stresinden kurtulalım.</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <div class="about-container">
+                <div class="about-content">
+                    <p>2005 yılında Fitlife Fitness Center ile başlayan hikayemiz 2012 ylında Fit24 ile devam etti ve 2015 yılında Türkiyenin en kapsamlı spor salonlarında biri olan HangaarGym Training Club ile sonuçlandı. 1500 m² toplam alana sahip olan salonumuz 400 m² crossfit alanı 600 m² fitness alanları ile hizmet vermektedir. Farklı spor disiplinlerinde çalışmalarına devam eden HangaarGym geçit bursa da hizmet vermektedir.</p>
+                    
+                    <p>Hangaargym ailesi olarak amacımız; üyelerimizin daha bilinçli spor yapmalarını sağlamak ve gelişimlerini hızlandırarak sporu sadece aktivite olarak görmelerini değil, yaşam tarzı haline getirmelerine yardımcı olmaktır. Yetişmekte olan nesillere spor bilinci ve alışkanlığı kazandırmak, her yaş ve meslek grubundan insanların yaşamlarını zindeleştirmek için gerekli olan fiziksel ve zihinsel gelişim imkanlarını sağlamaktır.</p>
+                    
+                    <p>Kendimizi her gün geliştirmeye ve ilerletmeye çalıştığımız bu yolda, edinmiş olduğumuz tecrübeler ile salonumuz, açıldığı günden bu yana ortaya koyduğu istikrarlı ve yenilikçi düşünce yapısıyla, profesyonel kadrosu ve giderek artan tecrübesi ile sizlere daha iyi hizmet vermeye çalışmak öncelikli hedefimizdir.</p>
+                </div>
+                <div class="video-content">
+                    <div class="video-container">
+                        <!-- Video buraya eklenecek -->
+                        <div class="video-placeholder">
+                            <span>Video Alanı</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sports-menu">
+            <button>Futbol Dersleri</button>
+            <button>Basketbol Dersleri</button>
+            <button>Beyzbol Dersleri</button>
+            <button>Su Topu Dersleri</button>
+            <button>Yüzme Dersleri</button>
+            <button>Tenis Dersleri</button>
+            <button>Masa Tenisi Dersleri</button>
+            <button>Voleybol Dersleri</button>
+        </div>
+    </main>
+
+    <section class="categories">
+        <div class="category">
+            <h2>Keşfet</h2>
+            <div class="category-content">
+                <button>Kulüp ve Stüdyolar</button>
+                <button>MAC+ Mobil Uygulaması</button>
+                <button>Üyelik Hesabına Giriş</button>
+                <button>Sık Sorulan Sorular</button>
+                <button>Topluluk</button>
+                <button>Üyelik Paketleri</button>
+                <button>Fiyat Listesi</button>
+                <button>Kulüp Çalışma Saatleri</button>
+                <button>Spa</button>
+                <button>MACBeat</button>
+                <button>Kampanyalar</button>
+                <button>Bize Ulaşın</button>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Hakkımızda</h2>
+            <div class="category-content">
+                <button>Kurumsal</button>
+                <button>İnsan ve Kültür</button>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Popüler İçerikler</h2>
+            <div class="category-content">
+                <button>Fitness Hareketleri Rehberi</button>
+                <button>Evde Spor Yapma Rehberi</button>
+                <button>Göğüs Kası Geliştirme Rehberi</button>
+                <button>Karın Kası Nasıl Yapılır?</button>
+                <button>En Popüler 5 Biceps Hareketi</button>
+                <button>En İyi 5 Arka Kol (Triceps) Hareketi</button>
+                <button>5 Popüler Kardiyo Hareketi</button>
+                <button>En İyi 6 Göbek Eritme Hareketi</button>
+                <button>Squat Nedir? Squat Nasıl Yapılır?</button>
+                <button>Definasyon Nedir? Nasıl Yapılır?</button>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Kulüpler</h2>
+            <div class="category-content">
+                <button>En Yakın Kulübü Bul</button>
+                <button>İstanbul Spor Salonları</button>
+                <button>Ankara Spor Salonları</button>
+                <button>İzmir Spor Salonları</button>
+                <button>Bursa Spor Salonları</button>
+                <button>Antalya Spor Salonları</button>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Hesaplama Araçları</h2>
+            <div class="category-content">
+                <button>Besin Kalori Hesaplama</button>
+                <button>Boy Kilo Endeksi</button>
+                <button>Bazal Metabolizma Hızı</button>
+                <button>Günlük Kalori İhtiyacı</button>
+                <button>Vücut Yağ Oranı</button>
+                <button>İdeal Kilo Hesaplama</button>
+                <button>Yağsız Vücut Kitlesi</button>
+                <button>1RM Hesaplama</button>
+                <button>Günlük Su İhtiyacı Hesaplama</button>
+                <button>Maksimum Kalp Hızı Hesaplama</button>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Bizi Takip Edin</h2>
+            <div class="social-media">
+                <a href="#" class="social-icon facebook"></a>
+                <a href="#" class="social-icon instagram"></a>
+            </div>
+        </div>
+    </section>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

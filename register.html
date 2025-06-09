@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üye Ol - Fitness Merkezi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Ana Sayfa</a>
+                <a href="#" class="nav-item">Fiyatlar</a>
+                <a href="#" class="nav-item">Kampanyalar</a>
+                <a href="#" class="nav-item">Antrenman Önerici</a>
+                <a href="#" class="nav-item">Grup Dersleri</a>
+                <a href="#" class="nav-item">Hakkımızda</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="register-container">
+        <div class="register-form">
+            <h2>Üye Ol</h2>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="firstName">Ad:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Soyad:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthDate">Doğum Tarihi:</label>
+                    <input type="date" id="birthDate" name="birthDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Mail Adresi:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Şifre:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Şifre Doğrulama:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="captcha-container">
+                    <h3>Güvenlik Doğrulaması</h3>
+                    <p>Lütfen aşağıdaki görseller arasından 3 adet ⭐ işaretleyiniz.</p>
+                    <div class="captcha-grid">
+                        <div class="captcha-item" data-value="star">⭐</div>
+                        <div class="captcha-item" data-value="heart">❤️</div>
+                        <div class="captcha-item" data-value="star">⭐</div>
+                        <div class="captcha-item" data-value="circle">⭕</div>
+                        <div class="captcha-item" data-value="heart">❤️</div>
+                        <div class="captcha-item" data-value="star">⭐</div>
+                        <div class="captcha-item" data-value="circle">⭕</div>
+                        <div class="captcha-item" data-value="star">⭐</div>
+                        <div class="captcha-item" data-value="heart">❤️</div>
+                    </div>
+                    <div class="captcha-status">Seçilen: <span id="selectedCount">0</span>/3 ⭐</div>
+                </div>
+
+                <button type="submit" class="register-submit-btn" disabled>Üyeliği Tamamla</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="register.js"></script>
+</body>
+</html> 
