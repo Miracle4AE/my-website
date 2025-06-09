@@ -36,9 +36,9 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const JWT_SECRET = process.env.JWT_SECRET || 'gizli-anahtar-123';
 
 // Statik dosyaları serve et
-app.use(express.static('public', staticOptions));
-app.use('/videos', express.static(path.join(__dirname, 'videos'), staticOptions));
-app.use('/images', express.static(path.join(__dirname, 'images'), staticOptions));
+app.use(express.static(path.join(__dirname)));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/videos', express.static(path.join(__dirname, 'videos')));
 app.use('/styles.css', express.static(path.join(__dirname, 'styles.css')));
 app.use('/*.js', express.static(path.join(__dirname), staticOptions));
 

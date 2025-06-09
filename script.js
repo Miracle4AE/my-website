@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Slider görselleri
 const sliderImages = [
-    './images/fitness-back.jpg.png',
-    './images/Screenshot_1.png',
-    './images/Screenshot_2.png',
-    './images/Screenshot_3.png',
-    './images/Screenshot_4.png'
+    'images/fitness-back.jpg.png',
+    'images/Screenshot_1.png',
+    'images/Screenshot_2.png',
+    'images/Screenshot_3.png',
+    'images/Screenshot_4.png'
 ];
 
 let currentSlide = 0;
@@ -27,6 +27,9 @@ const nextBtn = document.querySelector('.next');
 
 // Slider'ı başlat
 function initSlider() {
+    console.log('Slider başlatılıyor...');
+    console.log('Slider görselleri:', sliderImages);
+    
     sliderImages.forEach((image, index) => {
         const img = document.createElement('img');
         img.src = image;
@@ -36,8 +39,20 @@ function initSlider() {
         img.style.objectFit = 'cover';
         img.style.opacity = index === 0 ? '1' : '0';
         img.style.transition = 'opacity 0.5s ease-in-out';
+        
+        // Görsel yüklenme hatası kontrolü
+        img.onerror = () => {
+            console.error('Görsel yüklenemedi:', image);
+        };
+        
+        // Görsel başarıyla yüklendiğinde
+        img.onload = () => {
+            console.log('Görsel yüklendi:', image);
+        };
+        
         slider.appendChild(img);
     });
+    console.log('Slider başlatıldı');
 }
 
 // Slider'ı güncelle
