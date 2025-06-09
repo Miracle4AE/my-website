@@ -21,9 +21,8 @@
             const loadingScreen = document.getElementById('loading-screen');
             const loadingVideo = document.getElementById('loading-video');
             const skipButton = document.getElementById('skip-video');
-            let videoLoaded = false;
-            let videoEnded = false;
             let manualSkip = false;
+            let videoStartTime = 0;
 
             function handleVideoError() {
                 if (!manualSkip) {
@@ -32,10 +31,14 @@
             }
 
             function fadeOutAndHide() {
-                // Sadece video bittiğinde veya "Videoyu Atla" butonuna basıldığında geçiş yap
-                if (!videoEnded && !manualSkip) {
+                // Video en az 10 saniye oynatılmış olmalı veya manuel geçiş yapılmalı
+                const currentTime = new Date().getTime();
+                const videoPlayTime = (currentTime - videoStartTime) / 1000; // saniye cinsinden
+
+                if (!manualSkip && videoPlayTime < 10) {
                     return;
                 }
+
                 loadingScreen.classList.add('fade-out');
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
@@ -43,17 +46,12 @@
             }
 
             loadingVideo.addEventListener('loadeddata', function() {
-                videoLoaded = true;
+                videoStartTime = new Date().getTime();
                 loadingVideo.playbackRate = 1.0;
             });
 
             loadingVideo.addEventListener('error', function(e) {
                 handleVideoError();
-            });
-
-            loadingVideo.addEventListener('ended', function() {
-                videoEnded = true;
-                fadeOutAndHide();
             });
 
             // Videoyu Atla butonuna tıklandığında
@@ -73,6 +71,19 @@
                 console.error('Video yükleme hatası:', error);
                 handleVideoError();
             }
+
+            // Her saniye kontrol et
+            setInterval(() => {
+                if (!manualSkip) {
+                    const currentTime = new Date().getTime();
+                    const videoPlayTime = (currentTime - videoStartTime) / 1000;
+                    
+                    // 10 saniye sonra otomatik geçiş yap
+                    if (videoPlayTime >= 10) {
+                        fadeOutAndHide();
+                    }
+                }
+            }, 1000);
         });
 
         window.handleVideoError = function() {
