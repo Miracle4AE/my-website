@@ -10,9 +10,9 @@
 <body>
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
-        <video id="loading-video" class="loading-video" autoplay muted preload="auto" poster="videos/poster.jpg">
-            <source src="videos/large.mp4" type="video/mp4" onerror="handleVideoError()">
-            <source src="videos/stock-footage-man-coach-and-battle-rope-at-gym-for-workout-exercise-or-muscle-endurance-in-fitness-motivation.webm" type="video/webm" onerror="handleVideoError()">
+        <video id="loading-video" class="loading-video" autoplay muted preload="auto" crossorigin="anonymous">
+            <source src="./videos/large.mp4" type="video/mp4" onerror="handleVideoError()">
+            <source src="./videos/stock-footage-man-coach-and-battle-rope-at-gym-for-workout-exercise-or-muscle-endurance-in-fitness-motivation.webm" type="video/webm" onerror="handleVideoError()">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
         <div id="debug-info" style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 12px; display: none;"></div>
@@ -26,6 +26,18 @@
             const debugInfo = document.getElementById('debug-info');
             let videoLoaded = false;
 
+            // Video dosyasının varlığını kontrol et
+            fetch('./videos/large.mp4')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Video dosyası bulunamadı');
+                    }
+                    updateDebugInfo('Video dosyası mevcut');
+                })
+                .catch(error => {
+                    updateDebugInfo('Video dosyası kontrol hatası: ' + error.message);
+                });
+
             function updateDebugInfo(message) {
                 debugInfo.style.display = 'block';
                 debugInfo.innerHTML += message + '<br>';
@@ -37,6 +49,7 @@
                 updateDebugInfo('Video durumu: ' + loadingVideo.readyState);
                 updateDebugInfo('Video ağ durumu: ' + loadingVideo.networkState);
                 updateDebugInfo('Video hata kodu: ' + (loadingVideo.error ? loadingVideo.error.code : 'Yok'));
+                updateDebugInfo('Video yolu: ' + loadingVideo.currentSrc);
                 fadeOutAndHide();
             }
 
@@ -47,6 +60,11 @@
             loadingVideo.addEventListener('canplaythrough', () => updateDebugInfo('Video tamamen yüklenebilir'));
             loadingVideo.addEventListener('suspend', () => updateDebugInfo('Video yükleme askıya alındı'));
             loadingVideo.addEventListener('stalled', () => updateDebugInfo('Video yükleme durdu'));
+            
+            // Video yüklendiğinde kaynak bilgisini göster
+            loadingVideo.addEventListener('loadedmetadata', () => {
+                updateDebugInfo('Video kaynağı: ' + loadingVideo.currentSrc);
+            });
 
             // Video hızını normal hıza ayarla
             loadingVideo.playbackRate = 1.0;
@@ -84,10 +102,17 @@
 
             skipButton.addEventListener('click', fadeOutAndHide);
 
-            loadingVideo.play().catch(function(error) {
-                updateDebugInfo('Video otomatik başlatılamadı: ' + error.message);
+            // Video yükleme denemesi
+            try {
+                loadingVideo.load();
+                loadingVideo.play().catch(function(error) {
+                    updateDebugInfo('Video otomatik başlatılamadı: ' + error.message);
+                    handleVideoError();
+                });
+            } catch (error) {
+                updateDebugInfo('Video yükleme hatası: ' + error.message);
                 handleVideoError();
-            });
+            }
 
             setTimeout(() => {
                 if (!videoLoaded) {
