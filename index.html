@@ -74,7 +74,7 @@
     <div id="loading-screen">
         <button id="skip-video" class="skip-button">Videoyu Atla</button>
         <video id="loading-video" class="loading-video" autoplay muted preload="auto">
-            <source src="/videos/istockphoto-1208364797-640_adpp_is.mp4" type="video/mp4">
+            <source src="./videos/large.mp4" type="video/mp4">
         </video>
         <div id="loading-text" class="loading-text">DEĞİŞİME HAZIR OL!</div>
     </div>
@@ -95,35 +95,16 @@
 
             // Video yüklendiğinde
             loadingVideo.addEventListener('loadedmetadata', function() {
-                console.log('Video yüklendi, süre:', loadingVideo.duration);
                 loadingVideo.playbackRate = 1.0;
-            });
-
-            // Video yüklenemediğinde
-            loadingVideo.addEventListener('error', function() {
-                console.error('Video yüklenemedi:', loadingVideo.error);
-                // Video yüklenemezse 3 saniye sonra geç
-                setTimeout(fadeOutAndHide, 3000);
             });
 
             // Video bittiğinde
             loadingVideo.addEventListener('ended', function() {
-                console.log('Video bitti');
                 fadeOutAndHide();
-            });
-
-            // Video ilerleme kontrolü
-            loadingVideo.addEventListener('timeupdate', function() {
-                console.log('Video ilerleme:', loadingVideo.currentTime, '/', loadingVideo.duration);
-                // Video süresini kontrol et
-                if (loadingVideo.currentTime >= loadingVideo.duration - 0.1) {
-                    fadeOutAndHide();
-                }
             });
 
             // Videoyu Atla butonuna tıklandığında
             skipButton.addEventListener('click', function() {
-                console.log('Video atlandı');
                 manualSkip = true;
                 fadeOutAndHide();
             });
@@ -132,23 +113,8 @@
             loadingVideo.load();
             loadingVideo.play().catch(function(error) {
                 console.error('Video oynatma hatası:', error);
-                // Oynatma hatası varsa 3 saniye sonra geç
-                setTimeout(fadeOutAndHide, 3000);
+                fadeOutAndHide();
             });
-
-            // Video yüklenme durumunu kontrol et
-            fetch('/videos/istockphoto-1208364797-640_adpp_is.mp4')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Video dosyası bulunamadı');
-                    }
-                    console.log('Video dosyası mevcut');
-                })
-                .catch(error => {
-                    console.error('Video dosyası kontrol hatası:', error);
-                    // Video dosyası yoksa 3 saniye sonra geç
-                    setTimeout(fadeOutAndHide, 3000);
-                });
         });
     </script>
 
